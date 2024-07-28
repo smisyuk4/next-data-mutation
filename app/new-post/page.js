@@ -1,45 +1,47 @@
+import { redirect } from 'next/navigation';
+import FormSubmit from '@/components/form-submit';
 import { storePost } from '@/lib/posts';
 
-export default function NewPostPage() {
+export default async function NewPostPage() {
   async function createPost(formData) {
-    "use server";
+    'use server';
     const title = formData.get('title');
     const image = formData.get('image');
     const content = formData.get('content');
 
-    storePost({
+    await storePost({
       imageUrl: '',
       title,
       content,
-      userId: 1
-    })
+      userId: 1,
+    });
+
+    redirect('/feed');
   }
 
   return (
     <>
       <h1>Create a new post</h1>
       <form action={createPost}>
-        <p className="form-control">
-          <label htmlFor="title">Title</label>
-          <input type="text" id="title" name="title" />
+        <p className='form-control'>
+          <label htmlFor='title'>Title</label>
+          <input type='text' id='title' name='title' />
         </p>
-        <p className="form-control">
-          <label htmlFor="image">Image URL</label>
+        <p className='form-control'>
+          <label htmlFor='image'>Image URL</label>
           <input
-            type="file"
-            accept="image/png, image/jpeg"
-            id="image"
-            name="image"
+            type='file'
+            accept='image/png, image/jpeg'
+            id='image'
+            name='image'
           />
         </p>
-        <p className="form-control">
-          <label htmlFor="content">Content</label>
-          <textarea id="content" name="content" rows="5" />
+        <p className='form-control'>
+          <label htmlFor='content'>Content</label>
+          <textarea id='content' name='content' rows='5' />
         </p>
-        <p className="form-actions">
-          <button type="reset">Reset</button>
-          <button>Create Post</button>
-        </p>
+
+        <FormSubmit />
       </form>
     </>
   );
