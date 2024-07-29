@@ -43,10 +43,11 @@ export async function createPost(prevState, formData) {
     userId: 1,
   });
 
+  revalidatePath('/', 'layout');
   redirect('/feed');
 }
 
 export async function togglePostLikeStatus(postId) {
   await updatePostLikeStatus(postId, 2); // 2 - userId жостко записано в базі
-  revalidatePath('/feed'); // оновлює дані на сторінкці щоб побачити зміни лайка
+  revalidatePath('/', 'layout'); // оновлює дані на сторінкці щоб побачити зміни лайка
 }
