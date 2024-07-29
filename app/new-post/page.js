@@ -1,13 +1,30 @@
 import { redirect } from 'next/navigation';
-import FormSubmit from '@/components/form-submit';
 import { storePost } from '@/lib/posts';
+import PostForm from '@/components/post-form';
 
 export default async function NewPostPage() {
-  async function createPost(formData) {
+  async function createPost(prevState, formData) {
     'use server';
     const title = formData.get('title');
     const image = formData.get('image');
     const content = formData.get('content');
+
+    let errors = [];
+    if (!title || title.trim().length === 0) {
+      errors.push({ title: 'Title is required!' });
+    }
+
+    if (!image || image.size === 0) {
+      errors.push({ image: 'Image is required!' });
+    }
+
+    if (!content || content.trim().length === 0) {
+      errors.push({ content: 'Content is required!' });
+    }
+
+    if (errors.length > 0) {
+      return {errors};
+    }
 
     await storePost({
       imageUrl: '',
@@ -19,30 +36,5 @@ export default async function NewPostPage() {
     redirect('/feed');
   }
 
-  return (
-    <>
-      <h1>Create a new post</h1>
-      <form action={createPost}>
-        <p className='form-control'>
-          <label htmlFor='title'>Title</label>
-          <input type='text' id='title' name='title' />
-        </p>
-        <p className='form-control'>
-          <label htmlFor='image'>Image URL</label>
-          <input
-            type='file'
-            accept='image/png, image/jpeg'
-            id='image'
-            name='image'
-          />
-        </p>
-        <p className='form-control'>
-          <label htmlFor='content'>Content</label>
-          <textarea id='content' name='content' rows='5' />
-        </p>
-
-        <FormSubmit />
-      </form>
-    </>
-  );
+  return <PostForm action={createPost} />;
 }
